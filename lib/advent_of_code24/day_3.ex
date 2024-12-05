@@ -6,7 +6,6 @@ defmodule AdventOfCode24.Day3 do
     |> do_day_3_calculation()
   end
 
-
   def part_2() do
     "input/day_3.txt"
     |> File.read!()

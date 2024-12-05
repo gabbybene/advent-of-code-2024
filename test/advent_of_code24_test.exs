@@ -2,19 +2,101 @@ defmodule AdventOfCode24Test do
   use ExUnit.Case, async: true
   doctest AdventOfCode24
 
-  alias AdventOfCode24.{Day1, Day2, Day3, Day4}
+  alias AdventOfCode24.{Day1, Day2, Day3, Day4, Day5}
+
+  describe "Day5" do
+    setup ctx do
+      rules =
+        Map.get(ctx, :rules, [
+          {47, 53},
+          {97, 13},
+          {97, 61},
+          {97, 47},
+          {75, 29},
+          {61, 13},
+          {75, 53},
+          {29, 13},
+          {97, 29},
+          {53, 29},
+          {61, 53},
+          {97, 53},
+          {61, 29},
+          {47, 13},
+          {75, 47},
+          {97, 75},
+          {47, 61},
+          {75, 61},
+          {47, 29},
+          {75, 13},
+          {53, 13}
+        ])
+
+      [rules: rules]
+    end
+
+    @tag rules: [{61, 29}]
+    test "in_valid_order?/2 returns true when both  numbers are present and in correct order",
+         ctx do
+      valid_instruction = [75, 47, 61, 53, 29]
+
+      assert Day5.in_valid_order?(List.first(ctx.rules), valid_instruction)
+    end
+
+    @tag rules: [{29, 61}]
+    test "in_valid_order?/2 returns false when both numbers are present, but out of order", ctx do
+      invalid_instruction = [75, 47, 61, 53, 29]
+
+      refute Day5.in_valid_order?(List.first(ctx.rules), invalid_instruction)
+    end
+
+    test "is_valid_instruction?/2 returns true for list of instructions that is in a correct order",
+         ctx do
+      valid_instruction = [75, 47, 61, 53, 29]
+      # is correct because numbers are in valid order and numbers without instruction are ignored
+
+      assert Day5.is_valid_instruction?(valid_instruction, ctx.rules)
+    end
+
+    test "is_valid_instruction?/2 returns false for invalid list of instructions", ctx do
+      invalid_instruction = [75, 97, 47, 61, 53]
+
+      refute Day5.is_valid_instruction?(invalid_instruction, ctx.rules)
+    end
+
+    test "middle_index works" do
+      instruction = [75, 97, 47, 61, 53]
+
+      assert 47 == Day5.get_middle_value(instruction)
+    end
+
+    test "part_1", ctx do
+      instructions = [
+        [75, 47, 61, 53, 29],
+        [97, 61, 53, 29, 13],
+        [75, 29, 13],
+        [75, 97, 47, 61, 53],
+        [61, 13, 29],
+        [97, 13, 75, 29, 47]
+      ]
+
+      assert 143 == Day5.part_1(ctx.rules, instructions)
+    end
+
+    test "part_2", ctx do
+      instructions = [
+        [75, 47, 61, 53, 29],
+        [97, 61, 53, 29, 13],
+        [75, 29, 13],
+        [75, 97, 47, 61, 53],
+        [61, 13, 29],
+        [97, 13, 75, 29, 47]
+      ]
+
+      assert 123 == Day5.part_2(ctx.rules, instructions)
+    end
+  end
 
   describe "Day4" do
-    # test "for part 1, find_letters/1 returns a map of letters with row and column indices" do
-    #   word_search = "MMMSXXMASM\nMSAMXMSMSA"
-
-    #   assert %{
-    #            "X" => %{0 => [4, 5], 1 => [4]},
-    #            "M" => %{0 => [0, 1, 2, 6, 9], 1 => [0, 3, 5, 7]},
-    #            "A" => %{0 => [7], 1 => [2, 9]},
-    #            "S" => %{0 => [3, 8], 1 => [1, 6, 8]}
-    #          } == Day4.find_letters(word_search)
-    # end
     test "to_grid/1 returns grid of positions with character" do
       word_search = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\n"
 
@@ -37,11 +119,13 @@ defmodule AdventOfCode24Test do
     test "for part 1, correctly calculates result" do
       word_search =
         "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX"
+
       assert 18 == Day4.part_1(word_search)
     end
 
     test "for part 2, correctly calculates result" do
-      grid = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX"
+      grid =
+        "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX"
 
       assert 9 == Day4.part_2(grid)
     end

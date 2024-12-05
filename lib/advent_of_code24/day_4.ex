@@ -6,12 +6,13 @@ defmodule AdventOfCode24.Day4 do
     |> File.read!()
     |> part_1()
   end
+
   def part_1(input_data) do
     grid_data = to_grid(input_data)
 
-    Enum.reduce(grid_data, 0, fn ({position, _}, count) ->
+    Enum.reduce(grid_data, 0, fn {position, _}, count ->
       search_directions()
-      |> Enum.reduce(count, fn (direction, count) ->
+      |> Enum.reduce(count, fn direction, count ->
         case matches_word?(grid_data, @search_word, position, direction) do
           true -> count + 1
           false -> count
@@ -29,9 +30,9 @@ defmodule AdventOfCode24.Day4 do
   def part_2(input_data) do
     grid_data = to_grid(input_data)
 
-    Enum.reduce(grid_data, 0, fn ({position, _}, count) ->
+    Enum.reduce(grid_data, 0, fn {position, _}, count ->
       diagonal_directions()
-      |> Enum.reduce(count, fn (direction, count) ->
+      |> Enum.reduce(count, fn direction, count ->
         case matches_x_mas?(grid_data, position, direction) do
           true -> count + 1
           false -> count
@@ -52,7 +53,8 @@ defmodule AdventOfCode24.Day4 do
         new_position = adjust_position(position, direction)
         matches_word?(grid_data, rest_of_characters, new_position, direction)
 
-      _ -> false
+      _ ->
+        false
     end
   end
 
@@ -62,18 +64,18 @@ defmodule AdventOfCode24.Day4 do
   If diagonally-positioned characters are M A S, returns true
   """
   def matches_x_mas?(grid_data, position, direction) do
-    matches_mas?(grid_data, position, direction)  and
-    matches_mas?(grid_data, position, rotate_90(direction))
+    matches_mas?(grid_data, position, direction) and
+      matches_mas?(grid_data, position, rotate_90(direction))
   end
 
   def matches_mas?(grid_data, position, direction) do
     opposing_diagonal = opposing_diagonal(direction)
 
-    get_character(grid_data, position)  == "A" and
     # diagonally is M
-    get_character(grid_data, adjust_position(position, direction)) == "M" and
     # 180 degrees from M direction is S
-    get_character(grid_data, adjust_position(position, opposing_diagonal)) == "S"
+    get_character(grid_data, position) == "A" and
+      get_character(grid_data, adjust_position(position, direction)) == "M" and
+      get_character(grid_data, adjust_position(position, opposing_diagonal)) == "S"
   end
 
   defp get_character(grid_data, position) do
@@ -88,7 +90,7 @@ defmodule AdventOfCode24.Day4 do
 
   defp rotate_90({x, y}), do: {y, -x}
 
-  def adjust_position({curr_row, curr_col} = _position,  {row_adjust, col_adjust} = _direction) do
+  def adjust_position({curr_row, curr_col} = _position, {row_adjust, col_adjust} = _direction) do
     {curr_row + row_adjust, curr_col + col_adjust}
   end
 
